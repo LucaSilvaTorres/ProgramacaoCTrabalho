@@ -1,0 +1,108 @@
+Passo 1: 
+
+#include <stdio.h>
+#include <string.h>
+
+#include <stdio.h>: Ativa os comandos de entrada e saída (Standard Input/Output). Sem ela, o computador não entende o printf (escrever na tela) nem o scanf (ler o teclado).
+
+#include <string.h>: Ativa as funções de manipulação de texto. Você precisa dela especificamente para usar o strcmp, que compara se duas palavras são iguais.
+
+Passo 2: O Banco de Dados na Memória (Variáveis)Logo no início da função main(), você reserva espaço na memória RAM do computador:
+
+char medicamento[21][44];
+char dia[21][9];
+char hora[21][7];
+int quantidade[21];
+int z = 0;
+int acao;
+
+As Matrizes de Texto (Strings): O C não tem um tipo de dado "texto" nativo. Por isso, usamos matrizes.
+	- Medicamento[21][44] cria uma tabela com 21 linhas (espaço para 21 remédios). Cada linha pode ter uma palavra de até 43 letras (a 44ª letra é gasta pelo sistema com o caractere invisível \0, que avisa onde o texto termina).
+
+Os Vetores Paralelos: Perceba que todos os vetores têm tamanho 21. O seu programa associa as informações pelo índice [z]. Se z = 0 (primeiro cadastro), o nome estará em medicamento[0], o dia em dia[0], a hora em hora[0] e a quantidade em quantidade[0].
+
+int z = 0: É o seu contador de cadastros. Ele começa em zero (primeira posição da memória) e aumenta de 1 em 1 a cada remédio inserido.
+
+Passo 3: O Menu Inicial e o Laço Principal.
+
+printf("\n1 - Cadastrar\n2 - Consultar...\n");
+scanf("%d", &acao);
+
+while (acao != 4 && z < 7) {
+
+O scanf guarda o número digitado pelo usuário na variável acao.
+
+O while avalia a condição: "Enquanto o usuário não digitar 4 (Sair) E o número de cadastros (z) for menor que 7, continue repetindo o bloco abaixo".
+
+Passo 4: Estrutura da Opção 1 — Cadastrar
+
+if (acao == 1) {
+    printf("\nInforme o medicamento: ");
+    scanf(" %[^\n]", medicamento[z]);
+
+O truque do scanf(" %[^\n]", ...): O espaço antes do % limpa a memória do teclado (evita que o programa pule a pergunta). O [^\n] manda o computador ler tudo o que você digitar, incluindo espaços (como "Soro Caseiro"), parando apenas quando você apertar Enter.
+
+Os próximos comandos scanf salvam o dia, a hora e a quantidade na posição z atual da memória.
+
+z++;: Esta linha é vital. Ela soma +1 na variável z. Se você acabou de cadastrar o remédio na posição 0, o próximo será salvo na posição 1, impedindo que um cadastro apague o outro.
+
+Passo 5: Estrutura da Opção 2 — Consulta Inteligente
+
+Se o usuário escolher a opção 2, o programa pergunta se ele quer buscar por Medicamento (1) ou por Dia (2).
+
+Subetapa: Listar sem repetir (Deduplicação).
+
+Antes de pedir para o usuário digitar o que quer procurar, o seu código mostra os remédios já cadastrados. Para não repetir o nome caso a "Dipirona" tenha sido cadastrada duas vezes, você fez isto:
+
+for (int i = 0; i < z; i++) {
+    int yy = 0;
+    for (int x = 0; x < i; x++) {
+        if (strcmp(medicamento[i], medicamento[x]) == 0) {
+            yy = 1;
+        }
+    }
+    if (yy == 0) { printf("- %s\n", medicamento[i]); }
+}
+
+1- O laço i passa por cada remédio cadastrado.
+
+2 - O laço interno x olha para o passado (todas as posições antes de i).
+
+3 - O strcmp compara o remédio atual (i) com os anteriores (x). Se achar algum igual, yy vira 1 (sinal de alerta: "já existe!").
+
+4- O programa só exibe o nome na tela se yy continuar valendo 0 (ou seja, se for a primeira vez que o remédio aparece).
+
+Subetapa: A Busca Real
+
+printf("\nInforme o medicamento para consultar: ");
+scanf(" %[^\n]", medicamento2);
+
+for (int i = 0; i < z; i++) {
+    if (strcmp(medicamento2, medicamento[i]) == 0) {
+        // ... imprime o resultado ...
+        medicamentos = 1;
+    }
+}
+
+1. O usuário digita o nome procurado em medicamento.
+
+2. O laço for varre o banco de dados do início (0) até o fim (z).
+
+3. A cada linha, o strcmp verifica se o nome digitado é idêntico ao cadastrado. Se for igual, ele exibe na tela o dia, a hora e a quantidade daquela posição [i].
+
+4. A variável medicamentos muda para 1 para indicar que encontrou pelo menos um resultado. Se ao final do laço ela continuar 0, o programa exibe a mensagem de que o remédio não existe.
+
+(A lógica para a busca por Dia (opção 2) funciona exatamente igual, mas comparando a matriz dia).
+
+Passo 6: Estrutura da Opção 3 — Listar Tudo
+
+else if (acao == 3) {
+    printf("\nMedicamentos cadastrados:\n");
+    for (int i = 0; i < z; i++) {
+        printf("\t%s: %s às %s - %d comprimidos\n", medicamento[i], dia[i], hora[i], quantidade[i]);
+    }
+}
+
+Essa é a parte mais direta: um laço simples que vai de 0 até o total de cadastros z, exibindo todas as linhas da tabela formatadas na tela com um recuo de tabulação (\t).
+
+Passo 7: Reinício do LoopNo final de todo o bloco de condições, o programa repete o menu e pede uma nova acao. Se o usuário digitar 4, o while quebra e o programa chega ao return 0;, encerrando a execução com sucesso.
