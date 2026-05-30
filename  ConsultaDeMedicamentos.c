@@ -13,7 +13,7 @@ int main() {
     printf("\n1 - Cadastrar\n2 - Consultar medicamento ou dia\n3 - Medicamentos cadastrados\n4 - Sair\n");
     scanf("%d", &acao);
 
-    while (acao != 4 && z < 7) {
+    while (acao != 4 && z < 21) {
         if (acao == 1) {
             printf("\nInforme o medicamento: ");
             scanf(" %[^\n]", medicamento[z]);
